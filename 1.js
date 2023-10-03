@@ -15,21 +15,30 @@ container.append(input)
 let counter = 0;
 
 function launchGame(count){
-    if (count) {  //check values?
-        const newScript = getScript("2.js");
-        newScript.addEventListener("load", () => {
-                createGame(count, () => getScript("3.js"));
-            }
-        )
-        //newScript.removeEventListener()
+    if (count) {
+        getScript("2.js")
+            .then(() => createGame(count))
+            .then(() => getScript("3.js"))
+            .then(() => moveSquares(container))
+        // const newScript = getScript("2.js");
+        // newScript.addEventListener("load", () => {
+        //         createGame(count, () => getScript("3.js"));
+        //     }
+        // )
+
     }
 }
 
 function getScript(scriptSrc){
-    const newScript = document.createElement("script");
-    newScript.src = scriptSrc;
-    document.head.append(newScript)
-    return newScript;
+    return new Promise((resolve, reject) => {
+        const newScript = document.createElement("script");
+        newScript.src = scriptSrc;
+        newScript.addEventListener("load", () => {
+            resolve();
+        });
+        document.head.append(newScript);
+    });
+    // return newScript;
 }
 
 input.addEventListener("change", e => counter = e.target.value);
